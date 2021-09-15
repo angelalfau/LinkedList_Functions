@@ -220,55 +220,82 @@ def find_mid(head: ListNode, circular=False):
 # make lines 1 and 3 into arrays (e.g. [1,"->",2,"->",3]   and   ' '.join(array) at end)
 # take max of len(line1) and len(line3)
 # add spaces to make lower line equal to line 3
-def model_ll(head: ListNode, circular=False) -> None:
-    # case for singly non-circular linked list
-    # instead of asking if doubly, check if prev exists ( doubly if curr.next.prev else singly)
+def model_ll(head: ListNode) -> None:
 
     # for circular can check if curr.next or curr.next != head
+    if not head:
+        print("Error: Invalid Linked List.")
+        return
+    curr = head.next
+    doubly = False
+    circular = False
+    
+    # if this value != None, then linked list is doubly
+    if curr.prev:
+        doubly = True
+        arrow = " <-> "
+        back_arrow = " <-> "
+    else:
+        arrow = " -> "
+        back_arrow = " <- "
+
+    # adding all values of linked list into the [values]
+    values = [head.val]
+    while curr != head and curr:
+        values.append(curr.val)
+        curr = curr.next
+
+    # if we returned to the head, then linked list is circular
+    if curr == head:
+        circular = True
+
+    # handles singly and doubly linked lists (non-circular)
     if not circular:
-        curr = head
-        if curr.next.prev:
-            arrow = "<-> "
-        else:
-            arrow = "-> "
-        while curr.next:
-            print(curr.val, arrow, end="")
-            curr = curr.next
-        print(curr.val)
+        print(arrow.join(map(str,values)))
     
     # for circular singly
     # if even, print half of values on top, skip a line, and print rest backwards
     # if odd, need more space on bottom
     else:
-        if head.prev:
-            arrow = " <-> "
-            back_arrow = " <-> "
-        else:
-            arrow = " -> "
-            back_arrow = " <- "
-        values = [head.val]
-        curr = head.next
-        while curr != head:
-            values.append(curr.val)
-            curr = curr.next
         N = len(values)
         print(values[:N//2])
 
-        # 4 * num_arrows + N//2 - 2
-        # 4 * (N//2-1) + N//2 - 2
-        # N//2 = x
-        # 4 * (x-1) + x - 2
-        # 4x-6+x
-        # 5x-6
-        # 5*(N//2)-6
+
+        #          finding num_spaces for 2nd line of result for:
+        #         singly                             doubly
+        # 4 * num_arrows + N//2 - 2   |    5 * num_arrows + N//2 - 2
+        #  4 * (N//2-1) + N//2 - 2    |     5 * (N//2-1) + N//2 -2
+        #          N//2 = x           |             x = N//2
+        #      4 * (x-1) + x - 2      |         5 * (x-1) + x - 2
+        #           4x-6+x            |              5x-5+x-2
+        #            5x-6             |               6x-7
+        #         5*(N//2)-6          |            6*(N//2)-7
 
         if N % 2 == 0:
             half = N//2
             # even number of values, so print half on top, rest on bottom
-            print(arrow.join(map(str,values[:half])))
-            num_spaces = (5*(half))-6
-            print("^", " "*num_spaces, "v", sep="")
-            print(back_arrow.join(map(str,values[half:][::-1])))
+
+            first = list(map(str,values[:half]))
+            if doubly:
+                num_spaces = (6*(half))-7
+            else:
+                num_spaces = (5*(half))-6
+
+            third = list(map(str,values[half:][::-1]))
+        
+            # aligns top half of list with bottom half, based on # of digits of each item
+            for i in range(half):
+                diff = len(third[i]) - len(first[i])
+                if diff < 0:
+                    third[i] = " "*abs(diff) + third[i]
+                elif diff > 0:
+                    first[i] = " "*diff + first[i]
+                num_spaces += len(third[i])-1
+
+            # finally prints results
+            print(arrow.join(first))
+            print(" "*(len(first[0])-1),"^", " "*(num_spaces-len(first[0])+1), "v", sep="")
+            print(back_arrow.join(third))
         
         else: 
             # odd number of values, so figure something out
@@ -304,7 +331,7 @@ if __name__ == "__main__":
 
     # find_mid(chead,True)
 
-    model_ll(chead, True)
+    model_ll(chead)
 
 
 # [x] create reverse_linkedlist function
