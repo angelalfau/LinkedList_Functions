@@ -1,6 +1,5 @@
 from collections import deque
 
-# test
 
 class ListNode:
     def __init__(self, val=0, next=None, prev=None):
@@ -210,30 +209,102 @@ def find_mid(head: ListNode, circular=False):
     print(f"\nThe middle node of the list is: {low.val}\n")
     return low
 
-# if __name__ == "__main__":
-    queue = deque([1,2,3,4])
+
+# to improve,
+# work on cases where val is double digits or more  FOR CIRCULAR
+# could just make first line into string
+# then find length of string
+# second line print ^ then " "*len(line1)-2 then v
+# third line ???
+
+# make lines 1 and 3 into arrays (e.g. [1,"->",2,"->",3]   and   ' '.join(array) at end)
+# take max of len(line1) and len(line3)
+# add spaces to make lower line equal to line 3
+def model_ll(head: ListNode, circular=False) -> None:
+    # case for singly non-circular linked list
+    # instead of asking if doubly, check if prev exists ( doubly if curr.next.prev else singly)
+
+    # for circular can check if curr.next or curr.next != head
+    if not circular:
+        curr = head
+        if curr.next.prev:
+            arrow = "<-> "
+        else:
+            arrow = "-> "
+        while curr.next:
+            print(curr.val, arrow, end="")
+            curr = curr.next
+        print(curr.val)
+    
+    # for circular singly
+    # if even, print half of values on top, skip a line, and print rest backwards
+    # if odd, need more space on bottom
+    else:
+        if head.prev:
+            arrow = " <-> "
+            back_arrow = " <-> "
+        else:
+            arrow = " -> "
+            back_arrow = " <- "
+        values = [head.val]
+        curr = head.next
+        while curr != head:
+            values.append(curr.val)
+            curr = curr.next
+        N = len(values)
+        print(values[:N//2])
+
+        # 4 * num_arrows + N//2 - 2
+        # 4 * (N//2-1) + N//2 - 2
+        # N//2 = x
+        # 4 * (x-1) + x - 2
+        # 4x-6+x
+        # 5x-6
+        # 5*(N//2)-6
+
+        if N % 2 == 0:
+            half = N//2
+            # even number of values, so print half on top, rest on bottom
+            print(arrow.join(map(str,values[:half])))
+            num_spaces = (5*(half))-6
+            print("^", " "*num_spaces, "v", sep="")
+            print(back_arrow.join(map(str,values[half:][::-1])))
+        
+        else: 
+            # odd number of values, so figure something out
+            print("WIP: odd length linked list :( will be implemented shortly")
+    return
+
+
+
+if __name__ == "__main__":
+    # queue = deque([1,2,3,4])
+    queue = deque([1,2,3,4,5,6,7,8,9,10])
 
     head = create_linkedlist(queue.copy())
-    print_linkedlist(head)
+    # print_linkedlist(head)
     # print_linkedlist(reverse_linkedlist(head))
     # print_linkedlist(insert_listnode(head,9,True))
-    head = remove_n_node(head,1,False)
-    print_linkedlist(head)
+    # head = remove_n_node(head,1,False)
+    # print_linkedlist(head)
+    
 
-    # dhead = create_doublylinkedlist(queue.copy())
+    dhead = create_doublylinkedlist(queue.copy())
     # print_linkedlist(dhead, True)
     # print_linkedlist(reverse_doublylinkedlist(dhead),True)
 
-    # chead = create_circularlinkedlist(queue.copy())
+    chead = create_circularlinkedlist(queue.copy())
     # print_circularlinkedlist(chead)
     # print_circularlinkedlist(reverse_circularlinkedlist(chead))
     # print_circularlinkedlist(insert_circularlistnode(chead,9))
     
-    # cdhead = create_circulardoublylinkedlist(queue.copy())
+    cdhead = create_circulardoublylinkedlist(queue.copy())
     # print_circularlinkedlist(cdhead,True)
     # print_circularlinkedlist(reverse_circulardoublylinkedlist(cdhead),True)
 
     # find_mid(chead,True)
+
+    model_ll(chead, True)
 
 
 # [x] create reverse_linkedlist function
