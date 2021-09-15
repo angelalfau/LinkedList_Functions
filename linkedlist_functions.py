@@ -261,7 +261,7 @@ def model_ll(head: ListNode) -> None:
         print(values[:N//2])
 
 
-        #          finding num_spaces for 2nd line of result for:
+        #        finding num_spaces for 2nd line of result for:
         #         singly                             doubly
         # 4 * num_arrows + N//2 - 2   |    5 * num_arrows + N//2 - 2
         #  4 * (N//2-1) + N//2 - 2    |     5 * (N//2-1) + N//2 -2
