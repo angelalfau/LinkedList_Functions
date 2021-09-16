@@ -258,8 +258,6 @@ def model_ll(head: ListNode) -> None:
     # if odd, need more space on bottom
     else:
         N = len(values)
-        print(values[:N//2])
-
 
         #        finding num_spaces for 2nd line of result for:
         #         singly                             doubly
@@ -269,7 +267,7 @@ def model_ll(head: ListNode) -> None:
         #      4 * (x-1) + x - 2      |         5 * (x-1) + x - 2
         #           4x-6+x            |              5x-5+x-2
         #            5x-6             |               6x-7
-        #         5*(N//2)-6          |            6*(N//2)-7
+        #         5*(N//2)-6          |            6*(N//2)-7   -2 for double arrow (^v)
 
         if N % 2 == 0:
             half = N//2
@@ -277,9 +275,11 @@ def model_ll(head: ListNode) -> None:
 
             first = list(map(str,values[:half]))
             if doubly:
-                num_spaces = (6*(half))-7
+                num_spaces = (6*(half))-8
+                up_arrow = down_arrow = "^v"
             else:
                 num_spaces = (5*(half))-6
+                up_arrow, down_arrow = "^", "v"
 
             third = list(map(str,values[half:][::-1]))
         
@@ -294,19 +294,51 @@ def model_ll(head: ListNode) -> None:
 
             # finally prints results
             print(arrow.join(first))
-            print(" "*(len(first[0])-1),"^", " "*(num_spaces-len(first[0])+1), "v", sep="")
+            print(" "*(len(first[0])-1-doubly), up_arrow, " "*(num_spaces-len(first[0])+1), down_arrow, sep="")
             print(back_arrow.join(third))
         
         else: 
             # odd number of values, so figure something out
-            print("WIP: odd length linked list :( will be implemented shortly")
+            half = N//2 + 1
+            # idea -> print half+1 items on top
+            # and on bottom print rest, with right most element simply pointing to second right most
+            # e.g     1 -> 2 -> 3
+            #         ^         v
+            #         5 <- 4 <---
+
+            # only difference btwn even and odd
+            # third line printing, and half, and for loop length
+
+
+            first = list(map(str,values[:half]))
+            if doubly:
+                num_spaces = (6*(half))-8
+                up_arrow = down_arrow = "^v"
+            else:
+                num_spaces = (5*(half))-6
+                up_arrow, down_arrow = "^", "v"
+
+            third = list(map(str,values[half:][::-1]))
+            # aligns top half of list with bottom half, based on # of digits of each item
+            for i in range(half-1):
+                diff = len(third[i]) - len(first[i])
+                if diff < 0:
+                    third[i] = " "*abs(diff) + third[i]
+                elif diff > 0:
+                    first[i] = " "*diff + first[i]
+                num_spaces += len(third[i])-1
+
+            # finally prints results
+            print(arrow.join(first))
+            print(" "*(len(first[0])-1-doubly), up_arrow, " "*(num_spaces-len(first[0])+1), down_arrow, sep="")
+            print(back_arrow.join(third), " <","-"*(len(first[half-1])+2), sep="")
     return
 
 
 
 if __name__ == "__main__":
     # queue = deque([1,2,3,4])
-    queue = deque([1,2,3,4,5,6,7,8,9,10])
+    queue = deque([1,2,3,4,5,6,7,8,9])
 
     head = create_linkedlist(queue.copy())
     # print_linkedlist(head)
