@@ -64,7 +64,10 @@ def print_linkedlist(head: ListNode, reverse=False) -> None:
             print(curr.val)
             curr = curr.prev
     else:
-        print("\nPrinting non-circular linked list\n----------------------------------")
+        if head.next.prev:
+            print("\nPrinting non-circular doubly linked list\n--------------------------------")
+        else:
+            print("\nPrinting non-circular linked list\n----------------------------------")
         while head:
             print(head.val)
             head = head.next
@@ -191,40 +194,50 @@ def remove_n_node(head: ListNode, val: int, end=False):
     
     return sen.next
 
-def find_mid(head: ListNode, circular=False):
+def find_mid(head: ListNode, circular=None):
     low = head
     high = head
-    if circular:
+
+    # if user does not specify circular bool, we must check both cases
+    # case 1: where high and high.next are none ( list is non-circular )
+    # case 2: where high and high.next == head ( list is circular )
+    if circular == None:
         looped = False
-        while True:
+        while high and high.next:
             if looped and (high == head or high.next == head):
                 break
             low = low.next
             high = high.next.next
             looped = True
-    else:        
-        while high and high.next:
-            low = low.next
-            high = high.next.next
-    print(f"\nThe middle node of the list is: {low.val}\n")
-    return low
+        print(f"\nThe middle node of the list is: {low.val}\n")
+        return low
+
+    # if circular bool is specified, we dont have to check for both cases
+    else:
+        if circular:
+            looped = False
+            while True:
+                if looped and (high == head or high.next == head):
+                    break
+                low = low.next
+                high = high.next.next
+                looped = True
+        else:        
+            while high and high.next:
+                low = low.next
+                high = high.next.next
+        print(f"\nThe middle node of the list is: {low.val}\n")
+        return low
 
 
-# to improve,
-# work on cases where val is double digits or more  FOR CIRCULAR
-# could just make first line into string
-# then find length of string
-# second line print ^ then " "*len(line1)-2 then v
-# third line ???
 
-# make lines 1 and 3 into arrays (e.g. [1,"->",2,"->",3]   and   ' '.join(array) at end)
-# take max of len(line1) and len(line3)
-# add spaces to make lower line equal to line 3
+# prints out the layout of the linked list
+# shows each node and where they point to
 def model_ll(head: ListNode) -> None:
 
     # for circular can check if curr.next or curr.next != head
     if not head:
-        print("Error: Invalid Linked List.")
+        print("\nError: Invalid Linked List.")
         return
     curr = head.next
     doubly = False
@@ -252,6 +265,7 @@ def model_ll(head: ListNode) -> None:
     # handles singly and doubly linked lists (non-circular)
     if not circular:
         print(arrow.join(map(str,values)))
+    
     
     # for circular singly
     # if even, print half of values on top, skip a line, and print rest backwards
@@ -334,8 +348,6 @@ def model_ll(head: ListNode) -> None:
             print(back_arrow.join(third), " <","-"*(len(first[half-1])+2), sep="")
     return
 
-
-
 if __name__ == "__main__":
     # queue = deque([1,2,3,4])
     queue = deque([1,2,3,4,5,6,7,8,9])
@@ -349,7 +361,7 @@ if __name__ == "__main__":
     
 
     dhead = create_doublylinkedlist(queue.copy())
-    # print_linkedlist(dhead, True)
+    # print_linkedlist(dhead)
     # print_linkedlist(reverse_doublylinkedlist(dhead),True)
 
     chead = create_circularlinkedlist(queue.copy())
@@ -361,9 +373,11 @@ if __name__ == "__main__":
     # print_circularlinkedlist(cdhead,True)
     # print_circularlinkedlist(reverse_circulardoublylinkedlist(cdhead),True)
 
-    # find_mid(chead,True)
+    remove_n_node(cdhead,3)
+    model_ll(cdhead)
 
-    model_ll(chead)
+    # find_mid(cdhead)
+    # model_ll(cdhead)
 
 
 # [x] create reverse_linkedlist function
